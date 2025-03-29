@@ -48,7 +48,7 @@ public class ManualDisEnchantingScreen extends ItemCombinerScreen<ManualDisencha
         else if (!CommonConfigValues.uses_points && player.experienceLevel >= CommonConfigValues.experience_cost) mayPickupResult = true;
 
         // if the player can pickup the result, we don't draw the "insufficient experience" text or it's background
-        if (mayPickupResult || player.getAbilities().instabuild) return;
+        if (!ClientConfigValues.experience_indicator|| mayPickupResult || player.getAbilities().instabuild) return;
 
         guiGraphics.blit(BACKGROUND, this.leftPos + 99 + 3, this.topPos + 45, this.imageWidth, 0, 28, 21);
 

@@ -5,6 +5,7 @@ import com.cursee.disenchanting_table.core.network.packet.FabricItemSyncS2CPacke
 import com.cursee.disenchanting_table.core.registry.FabricBlockEntities;
 import com.cursee.disenchanting_table.core.registry.FabricNetwork;
 import com.cursee.disenchanting_table.core.util.DisenchantmentHelper;
+import com.cursee.disenchanting_table.core.util.ExperienceHelper;
 import com.cursee.disenchanting_table.core.world.inventory.AutoDisEnchantingMenu;
 import com.cursee.disenchanting_table.core.world.inventory.ManualDisenchantingMenu;
 import io.netty.buffer.Unpooled;
@@ -189,6 +190,7 @@ public class FabricDisEnchantingBE extends BlockEntity implements MenuProvider, 
             this.setItem(1, bookStack);
         }
 
+        if (!CommonConfigValues.requires_experience) return;
         Player player = this.nearestPlayer(level, pos);
         if (!CommonConfigValues.requires_experience || player == null || player.getAbilities().instabuild) return; // player is never null here due to preceding nearestPlayerHasEnoughExperience
         if (CommonConfigValues.uses_points) {
@@ -218,7 +220,12 @@ public class FabricDisEnchantingBE extends BlockEntity implements MenuProvider, 
         Player player = this.nearestPlayer(level, pos);
 
         if (player == null) return false;
-        if (!CommonConfigValues.requires_experience || player.experienceLevel > 0 || player.getAbilities().instabuild) return true;
+        if (player.getAbilities().instabuild) return true;
+        if (!CommonConfigValues.requires_experience) return true;
+        // if (player.experienceLevel > 0 || player.getAbilities().instabuild) return true;
+
+        if (CommonConfigValues.uses_points && ExperienceHelper.totalPointsFromLevelAndProgress(player.experienceLevel, player.experienceProgress) >= CommonConfigValues.experience_cost) return true;
+        if (!CommonConfigValues.uses_points && player.experienceLevel >= CommonConfigValues.experience_cost) return true;
 
         return false;
     }

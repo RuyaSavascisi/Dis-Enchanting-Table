@@ -126,7 +126,7 @@ public class ManualDisenchantingMenu extends ItemCombinerMenu {
             this.resultSlots.setItem(0, result);
         }
 
-        if (!this.resultSlots.isEmpty()) {
+        if (!this.resultSlots.isEmpty() && CommonConfigValues.requires_experience) {
 
             int currentExperience = ExperienceHelper.totalPointsFromLevelAndProgress(player.experienceLevel, player.experienceProgress);
 
@@ -168,6 +168,8 @@ public class ManualDisenchantingMenu extends ItemCombinerMenu {
         this.keptEnchantment = null;
         this.keptEnchantmentLevel = 0;
         this.stolenEnchantments = null;
+
+        if (!CommonConfigValues.requires_experience) return;
 
         if (CommonConfigValues.uses_points) player.giveExperiencePoints(-CommonConfigValues.experience_cost);
         else player.giveExperienceLevels(-CommonConfigValues.experience_cost);

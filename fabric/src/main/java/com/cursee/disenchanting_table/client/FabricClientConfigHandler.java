@@ -17,14 +17,14 @@ public class FabricClientConfigHandler {
     }
 
     private static final String[] DEFAULT_CONFIG = new String[] {
-            "render_ender_particles = true",
             "# setting this to \"false\" will stop particles from rendering around the disenchanting table",
+            "render_ender_particles = true",
 
-            "experience_indicator = true",
             "# setting this to \"false\" will cause the \"Insufficient Experience\" text to not display",
+            "experience_indicator = true",
 
-            "render_table_item = true",
-            "# setting this to \" false\" will stop input/output items from displaying on the block"
+            "# setting this to \" false\" will stop input/output items from displaying on the block",
+            "render_table_item = true"
     };
 
     private static void handleConfig(File file) {

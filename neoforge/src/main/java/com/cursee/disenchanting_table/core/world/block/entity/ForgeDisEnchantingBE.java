@@ -5,6 +5,7 @@ import com.cursee.disenchanting_table.core.network.packet.NeoForgeItemSyncS2CPac
 import com.cursee.disenchanting_table.core.registry.ForgeBlockEntities;
 import com.cursee.disenchanting_table.core.registry.ForgeNetwork;
 import com.cursee.disenchanting_table.core.util.DisenchantmentHelper;
+import com.cursee.disenchanting_table.core.util.ExperienceHelper;
 import com.cursee.disenchanting_table.core.util.LazyOptional;
 import com.cursee.disenchanting_table.core.world.block.DisEnchantingTableBlock;
 import com.cursee.disenchanting_table.core.world.inventory.AutoDisEnchantingMenu;
@@ -337,6 +338,7 @@ public class ForgeDisEnchantingBE extends BlockEntity implements MenuProvider, W
             this.setItem(1, bookStack);
         }
 
+        if (!CommonConfigValues.requires_experience) return;
         Player player = this.nearestPlayer(level, pos);
         if (!CommonConfigValues.requires_experience || player == null || player.getAbilities().instabuild) return; // player is never null here due to preceding nearestPlayerHasEnoughExperience
         if (CommonConfigValues.uses_points) {
@@ -372,7 +374,12 @@ public class ForgeDisEnchantingBE extends BlockEntity implements MenuProvider, W
         Player player = this.nearestPlayer(level, pos);
 
         if (player == null) return false;
-        if (!CommonConfigValues.requires_experience || player.experienceLevel > 0 || player.getAbilities().instabuild) return true;
+        if (player.getAbilities().instabuild) return true;
+        if (!CommonConfigValues.requires_experience) return true;
+        // if (player.experienceLevel > 0 || player.getAbilities().instabuild) return true;
+
+        if (CommonConfigValues.uses_points && ExperienceHelper.totalPointsFromLevelAndProgress(player.experienceLevel, player.experienceProgress) >= CommonConfigValues.experience_cost) return true;
+        if (!CommonConfigValues.uses_points && player.experienceLevel >= CommonConfigValues.experience_cost) return true;
 
         return false;
     }
@@ -380,6 +387,11 @@ public class ForgeDisEnchantingBE extends BlockEntity implements MenuProvider, W
     @Override
     public int @NotNull [] getSlotsForFace(@NotNull Direction side) {
         return side == Direction.DOWN ? new int[]{2} : new int[]{0, 1};
+    }
+
+    @Override
+    public boolean canPlaceItem(int slot, ItemStack stack) {
+        return (slot == 0 && DisenchantmentHelper.canRemoveEnchantments(stack)) || (slot == 1 && stack.is(Items.BOOK));
     }
 
     @Override
