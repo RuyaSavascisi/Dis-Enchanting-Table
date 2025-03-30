@@ -49,7 +49,8 @@ public class ForgeNetwork {
     }
 
     public static <MSG> void sendToPlayer(MSG message, ServerPlayer player) {
-        INSTANCE.send(message, PacketDistributor.PLAYER.noArg());
+        // INSTANCE.send(message, PacketDistributor.PLAYER.noArg());
+        INSTANCE.send(message, player.connection.getConnection());
     }
 
 //    private static final String PROTOCOL_VERSION = "1";
